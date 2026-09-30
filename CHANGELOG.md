@@ -2,6 +2,12 @@
 
 Newest entries appear first.
 
+## 2026-09-30 · GitHub Pages path preparation
+
+- Set Vite's base path to `/dark-energy/` and made the wordmark home link follow the configured base.
+- Validation: all three physics tests, TypeScript checks, and the production build passed. Built HTML uses the project prefix for scripts, styles, and the home link; the tracking worker and hand model are included in `dist/`.
+- This prepares paths only. No deployment workflow was added and no site was published; hosted camera behavior remains unverified.
+
 ## 2026-09-30 · English interface and documentation
 
 - Translated the full app interface into English, including controls, instructions, status messages, camera recovery prompts, WebGL errors, page metadata, and accessibility labels.
