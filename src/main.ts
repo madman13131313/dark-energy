@@ -75,7 +75,7 @@ function updateHands(landmarks: NormalizedLandmark[][], handedness: Category[][]
     return points;
   });
   previousHands = next; lastResult = performance.now();
-  el('hand-count').textContent = tracked.length ? `已识别 ${tracked.length} 只手` : '把手放进画面';
+  el('hand-count').textContent = tracked.length ? `${tracked.length} hand${tracked.length === 1 ? "" : "s"} detected` : 'Bring your hands into view';
 }
 
 function stopCamera(showMessage = true) {
@@ -85,19 +85,19 @@ function stopCamera(showMessage = true) {
   stream?.getTracks().forEach(track => track.stop()); stream = undefined;
   video.pause(); video.srcObject = null; clearHands();
   stage.classList.remove('camera-on');
-  start.disabled = !renderer; start.innerHTML = '开启摄像头 <span>↗</span>';
-  el('mode').textContent = '鼠标试玩'; el('indicator').classList.remove('active');
-  el('hand-count').textContent = '移动指针，推动能量';
-  el('hint').textContent = '不按鼠标也能推 · 触屏用手指滑动';
-  if (showMessage) message('摄像头已关闭。可以继续用鼠标或触屏试玩。');
+  start.disabled = !renderer; start.innerHTML = 'Enable camera <span>↗</span>';
+  el('mode').textContent = 'Mouse mode'; el('indicator').classList.remove('active');
+  el('hand-count').textContent = 'Move your pointer to push';
+  el('hint').textContent = 'Move to push · Swipe on touchscreens';
+  if (showMessage) message('Camera off. You can keep playing with your mouse or touchscreen.');
 }
 
 async function startCamera() {
   if (stream || loading) { stopCamera(); return; }
-  if (!navigator.mediaDevices?.getUserMedia) { message('无法使用摄像头。请在 localhost 或 HTTPS 下使用 Chrome。鼠标模式仍可试玩。', true); return; }
+  if (!navigator.mediaDevices?.getUserMedia) { message('Camera unavailable. Use Chrome on localhost or HTTPS. Mouse mode is still available.', true); return; }
   loading = true; start.disabled = true;
   const token = ++session;
-  message('正在请求摄像头权限…');
+  message('Requesting camera permission…');
   try {
     const acquired = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 960 }, height: { ideal: 720 }, frameRate: { ideal: 30, max: 30 } }, audio: false });
     if (token !== session) { acquired.getTracks().forEach(t => t.stop()); return; }
@@ -105,18 +105,18 @@ async function startCamera() {
     await video.play();
     if (token !== session) return;
     stage.classList.add('camera-on');
-    message('正在加载手部识别模型，首次启动需要稍等…');
-    start.disabled = false; start.textContent = '关闭摄像头';
+    message('Loading hand tracking. The first startup may take a moment…');
+    start.disabled = false; start.textContent = 'Disable camera';
     const currentWorker = new Worker(new URL(`${import.meta.env.BASE_URL}tracking.worker.js`, window.location.href));
     worker = currentWorker;
     await new Promise<void>((resolve, reject) => {
-      const timer = window.setTimeout(() => reject(new Error('模型加载超时，请关闭后重试；若仍失败，运行 npm run setup。')), 45000);
+      const timer = window.setTimeout(() => reject(new Error('Hand tracking took too long to load. Disable the camera and try again. If this persists, run npm run setup.')), 45000);
       cancelLoading = () => { clearTimeout(timer); resolve(); };
       currentWorker.onerror = () => {
         clearTimeout(timer);
         if (token !== session) return;
-        if (!ready) reject(new Error('识别线程加载失败。请运行 npm run setup 后重新启动。'));
-        else { stopCamera(false); message('手部识别线程中断。可以重新开启摄像头，或继续鼠标试玩。', true); }
+        if (!ready) reject(new Error('Could not start hand tracking. Run npm run setup, then restart.'));
+        else { stopCamera(false); message('The hand tracking worker stopped. Re-enable the camera or continue with your mouse.', true); }
       };
       currentWorker.onmessage = ({ data }) => {
         if (token !== session) { clearTimeout(timer); resolve(); return; }
@@ -124,8 +124,8 @@ async function startCamera() {
         else if (data.type === 'result') { busy = false; updateHands(data.landmarks, data.handedness, data.timestamp); }
         else if (data.type === 'error') {
           clearTimeout(timer);
-          if (!ready) reject(new Error('无法加载手部识别模型。请运行 npm run setup 后重新启动。'));
-          else { stopCamera(false); message('手部识别中断。可以重新开启摄像头，或继续鼠标试玩。', true); }
+          if (!ready) reject(new Error('Could not load the hand tracking model. Run npm run setup, then restart.'));
+          else { stopCamera(false); message('Hand tracking stopped. Re-enable the camera or continue with your mouse.', true); }
           console.error('Hand tracking:', data.message);
         }
       };
@@ -133,21 +133,21 @@ async function startCamera() {
     });
     if (token !== session) return;
     cancelLoading = undefined; loading = false; lastFrameTime = -1; lastSent = 0;
-    el('mode').textContent = '摄像头已开启'; el('indicator').classList.add('active');
-    el('hint').textContent = '让整只手进入画面 · 慢推变形，快挥拍走';
-    message('手部识别已开启。伸出手，用指尖或手掌接触黑色能量。');
+    el('mode').textContent = 'Camera on'; el('indicator').classList.add('active');
+    el('hint').textContent = 'Keep your whole hand in view · Push slowly, swipe quickly';
+    message('Hand tracking is ready. Reach out and touch the energy with your fingertips or palm.');
     stream.getVideoTracks()[0].addEventListener('ended', () => { if (token === session) stopCamera(); });
   } catch (error) {
     if (token !== session) return;
     stopCamera(false);
     const name = error instanceof Error ? error.name : '';
-    message(name === 'NotAllowedError' ? '摄像头权限未开启。允许此页面使用摄像头后重试，或继续鼠标试玩。' : name === 'NotFoundError' ? '没有找到摄像头。连接摄像头后重试，或继续鼠标试玩。' : name === 'NotReadableError' ? '摄像头可能正被其他程序占用。关闭占用它的程序后重试。' : error instanceof Error ? error.message : '摄像头启动失败，请重试。', true);
+    message(name === 'NotAllowedError' ? 'Camera permission denied. Allow camera access and try again, or continue with your mouse.' : name === 'NotFoundError' ? 'No camera found. Connect one and try again, or continue with your mouse.' : name === 'NotReadableError' ? 'Your camera may be in use. Close other apps using it, then try again.' : error instanceof Error ? error.message : 'Could not start the camera. Please try again.', true);
   }
 }
 
 start.addEventListener('click', () => { void startCamera(); });
 pause.addEventListener('click', () => {
-  paused = !paused; pause.textContent = paused ? '继续' : '暂停'; pause.setAttribute('aria-pressed', String(paused));
+  paused = !paused; pause.textContent = paused ? 'Resume' : 'Pause'; pause.setAttribute('aria-pressed', String(paused));
   clearHands(); pointer = undefined;
 });
 el('reset').addEventListener('click', () => { energy.reset(); });
@@ -161,8 +161,8 @@ el('fullscreen').addEventListener('click', async () => {
   try {
     if (document.fullscreenElement) await document.exitFullscreen();
     else if (stage.requestFullscreen) await stage.requestFullscreen();
-    else message('此浏览器不支持页面全屏，可以横屏或放大窗口试玩。');
-  } catch { message('无法进入全屏，请使用浏览器的全屏功能。'); }
+    else message('Fullscreen is unavailable in this browser. Rotate your device or enlarge the window.');
+  } catch { message('Could not enter fullscreen. Try your browser’s fullscreen option.'); }
 });
 document.addEventListener('visibilitychange', () => { clearHands(); pointer = undefined; lastAnimation = performance.now(); });
 window.addEventListener('pagehide', () => stopCamera(false));
@@ -175,12 +175,12 @@ async function sendFrame(now: number) {
     const bitmap = await createImageBitmap(video, { resizeWidth: 640, resizeHeight: Math.max(1, Math.round(640 * video.videoHeight / video.videoWidth)) });
     if (token !== session || worker !== currentWorker) { bitmap.close(); return; }
     currentWorker.postMessage({ type: 'frame', bitmap, timestamp: now }, [bitmap]);
-  } catch { if (token === session) { stopCamera(false); message('浏览器无法处理摄像头画面。请使用最新版 Chrome，或继续鼠标试玩。', true); } }
+  } catch { if (token === session) { stopCamera(false); message('This browser could not process the camera video. Use the latest Chrome or continue with your mouse.', true); } }
 }
 
 function animate(now: number) {
   const dt = Math.min((now - lastAnimation) / 1000, 1 / 30); lastAnimation = now;
-  if (now - lastResult > 200) { tracked = []; handColliders = []; if (ready) el('hand-count').textContent = '把手放进画面'; }
+  if (now - lastResult > 200) { tracked = []; handColliders = []; if (ready) el('hand-count').textContent = 'Bring your hands into view'; }
   const pointerAge = now - pointerTime;
   const mouse = pointer && pointerAge < 220 ? [{ ...pointer, px: pointerAge < 40 ? pointer.px : pointer.x, py: pointerAge < 40 ? pointer.py : pointer.y, vx: pointerAge < 40 ? pointer.vx : 0, vy: pointerAge < 40 ? pointer.vy : 0 }] : [];
   // Decay stale velocity between inference frames to avoid continually applying old impulses.

@@ -37,7 +37,7 @@ export class Renderer {
   private time: WebGLUniformLocation | null;
   constructor(private canvas: HTMLCanvasElement) {
     const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false });
-    if (!gl) throw new Error('这个浏览器无法启用 WebGL，请开启硬件加速或使用 Chrome。');
+    if (!gl) throw new Error('WebGL is unavailable. Enable hardware acceleration or use Chrome.');
     this.gl = gl;
     const compile = (type: number, source: string) => {
       const shader = gl.createShader(type)!;

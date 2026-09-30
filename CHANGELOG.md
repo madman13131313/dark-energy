@@ -1,15 +1,24 @@
-# 开发日志
+# Changelog
 
-最新记录放在顶部。
+Newest entries appear first.
 
-## 2026-09-30 · v0.1.0 · 第一个可运行原型
+## 2026-09-30 · English interface and documentation
 
-- 初始化 Vite / TypeScript 项目，固定依赖版本并提交 lockfile。
-- 摄像头镜像预览、双手识别、手部轨迹开关。
-- 在 Worker 中执行手部推理；资源本地提供，不上传画面。
-- 黑色能量弹性粒子团与 WebGL metaball 表面；漂浮、轮廓起伏、接触变形、推动、反弹和重新聚拢。
-- 加入鼠标 / 触屏模式，暂停、重置、全屏及两项手感调节。
-- 摄像头关闭、重新开启、页面离开释放资源；权限和模型失败提示。
-- 加入安装和运行说明、资产下载脚本、物理测试。
-- 验证：TypeScript / 生产构建；三项物理测试；独立 Chromium 模拟摄像头、官方手部样例识别、关闭与重启、桌面和 390px 移动布局。
-- 尚待：用户真实摄像头试玩和手感反馈；响指、切割和融合留待后续版本。
+- Translated the full app interface into English, including controls, instructions, status messages, camera recovery prompts, WebGL errors, page metadata, and accessibility labels.
+- Set the document language to English and translated the README and existing changelog for an English-speaking audience.
+- Added guidance for sharing a public HTTPS resume demo; no hosting or deployment was configured.
+- Preserved the existing physics, rendering, tracking, and camera behavior.
+- Validation: all three physics tests, TypeScript checks, and the production build passed. Browser inspection confirmed English desktop and 390px layouts and Pause / Resume labels; no Chinese text remains in the app source or documentation.
+- Real-camera interaction remains subject to user testing; translation checks do not establish device compatibility or interaction quality.
+
+## 2026-09-30 · v0.1.0 · First runnable prototype
+
+- Initialized the Vite / TypeScript project with pinned dependencies and a committed lockfile.
+- Added mirrored camera preview, two-hand tracking, and a hand-overlay toggle.
+- Moved hand inference into a Worker with locally served assets and no video uploads.
+- Added an elastic particle cluster and WebGL metaball surface with floating, silhouette variation, contact deformation, pushing, bounce, and regrouping.
+- Added mouse / touchscreen interaction, pause, reset, fullscreen, and two interaction controls.
+- Added resource cleanup on camera shutdown and page exit, camera restart, and permission / model recovery prompts.
+- Added setup and usage documentation, an asset setup script, and physics tests.
+- Original prototype validation: TypeScript / production build; three physics tests; standalone Chromium with a simulated camera, official hand-sample inference, shutdown / restart, and desktop / 390px mobile layouts.
+- Pending: user testing with a real camera and interaction feedback. Finger snaps, cutting, and merging are deferred.

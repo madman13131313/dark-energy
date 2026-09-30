@@ -1,10 +1,12 @@
-# Dark Energy / 黑色能量
+# Dark Energy
 
-用摄像头里的手，推动一团漂浮的黑色物质。第一版先探索它的流动感、重量和接触反馈。
+An interactive experiment in living digital matter. Push a floating mass of dark energy with your palms and fingertips, or explore it with your mouse. Slow contact deforms its surface; a fast swipe sends it drifting before it gathers again.
 
-## 在电脑上运行
+Built with **Vite, TypeScript, MediaPipe, and native WebGL**. The first prototype focuses on flow, weight, and tactile feedback.
 
-准备 Chrome、Git 和 **Node.js 22.12 或更新的 LTS 版本**。打开终端：
+## Run locally
+
+Use Chrome, Git, and **Node.js 22.12 or a newer LTS release**:
 
 ```sh
 git clone https://github.com/madman13131313/dark-energy.git
@@ -13,67 +15,73 @@ npm install
 npm run dev
 ```
 
-这是私有仓库，克隆时需要使用有权限的 GitHub 账号。也可以从 GitHub 的 **Code → Download ZIP** 下载，解压后在项目目录执行后面两条 npm 命令。
+If the repository is private, cloning requires a GitHub account with access. You can also use **Code → Download ZIP**, extract it, and run the npm commands in the project directory.
 
-Chrome 打开终端显示的地址，默认是 **http://localhost:5173**。如果端口已被占用，以终端实际显示的地址为准。
+Open the address printed by Vite in Chrome, normally **http://localhost:5173**. If that port is occupied, use the address shown in your terminal.
 
-1. 先移动鼠标推动黑色能量，不需要点击或开启摄像头。
-2. 点击「开启摄像头」，允许摄像头权限。
-3. 让整只手进入画面，用指尖或手掌接触能量；支持两只手。
-4. 慢慢推会产生局部变形，快速挥动会把它推走。停下来后能量会聚拢并缓慢漂浮。
-5. 可以调节流动程度和推动力度、暂停、重置、隐藏手部轨迹或全屏。
-6. 「关闭摄像头」会停止摄像头并释放识别线程，仍可用鼠标试玩。
+1. Move your mouse to push the energy. No click or camera is required.
+2. Select **Enable camera** and allow camera access.
+3. Keep your whole hand in view. Touch the energy with your fingertips or palm; up to two hands are supported.
+4. Push slowly to deform it, or swipe quickly to send it away. Stop and watch it gather and float again.
+5. Adjust **Flow** and **Push strength**, pause, reset, toggle hand tracking, or enter fullscreen.
+6. **Disable camera** stops the video tracks and terminates the tracking worker. Mouse mode remains available.
 
-首次 `npm install` 会复制固定版本的 MediaPipe SDK / WASM，并从 Google 官方地址下载约 7.5 MB 的手部模型。安装需要网络；之后识别在本地进行，不需要远程推理服务。
+The first installation copies the pinned MediaPipe SDK / WASM and downloads the approximately 7.5 MB hand model from Google’s official model storage. Setup requires internet access; inference then runs locally with no remote inference service.
 
-如果下载模型失败，鼠标模式仍能运行。恢复网络后执行：
+If the model download fails, mouse mode still works. Once your connection is available, run:
 
 ```sh
 npm run setup
 ```
 
-## 当前功能与边界
+## Features and limitations
 
-- 摄像头镜像预览；保留完整画幅，手部坐标同步映射到实际视频区域。
-- MediaPipe 双手追踪；指尖、手指关节和手掌共同形成接触区域。
-- 弹性粒子团 + WebGL metaball 表面，深黑中心、薄油膜边缘、持续轮廓起伏。
-- 接触排斥、挥动动量、屏幕边缘反弹、变形后的聚拢。
-- 鼠标 / 触屏试玩；摄像头权限或模型失败时给出恢复提示。
-- 响指生成、多团融合、切割、抓取、拉伸暂未实现。
+- Mirrored camera preview with the complete video frame preserved; hand coordinates map to the actual displayed video area.
+- Two-hand MediaPipe tracking, with fingertips, finger joints, and palms forming contact regions.
+- An elastic particle cluster with a continuous WebGL metaball surface: a dark core, subtle oil-like edges, and a moving silhouette.
+- Contact repulsion, swipe momentum, boundary bounce, and regrouping after deformation.
+- Mouse and touchscreen interaction, with recovery messages for camera or model failures.
+- Finger snaps, merging, cutting, grabbing, and stretching are future directions and are not implemented.
 
-这一版是 **二维摄像头叠加实验**，没有真实空间深度和手部遮挡：在画面中的位置相遇就会产生接触。真实摄像头下的识别稳定性和推动感觉还需要试玩调节。优先测试桌面 Chrome；未验证真实 iPhone / iPad 摄像头兼容性。
+This is a **2D camera-overlay experiment**. It does not model physical depth or hand occlusion: overlapping positions in the image create contact. Tracking stability and interaction feel still need real-camera testing and tuning. Desktop Chrome is the primary target; real iPhone / iPad camera compatibility has not been verified.
 
-## 隐私
+## Privacy
 
-仅在点击按钮后请求摄像头。不请求麦克风，不录制、不保存、不上传摄像头画面，没有分析统计或后台服务。SDK、WASM 和模型在安装时下载，运行时由本地开发服务提供。
+Camera access is requested only after you select **Enable camera**. The app does not request microphone access, record, save, or upload camera video. There is no analytics or backend service. The SDK, WASM, and model are downloaded during setup and served locally during development. On a hosted demo, these assets are served by the website; camera processing still happens in the visitor’s browser.
 
-## 开发
+## Development
 
-采用 Vite + TypeScript + MediaPipe + 原生 WebGL。单页原型不需要 React / Next.js 或 Three.js；保留独立的物理和渲染模块，便于继续扩展。
+The prototype uses separate physics and rendering modules without React, Next.js, or Three.js.
 
 ```sh
-npm test       # 坐标映射、快速扫过接触、长期模拟与聚拢
-npm run build # TypeScript 检查和生产构建
+npm test       # Coordinate mapping, swept contact, simulation stability and regrouping
+npm run build  # TypeScript checks and production build
 npm run preview
 ```
 
-手部推理放在 classic Web Worker 中，每秒最多发送 20 帧、每次只有一帧在处理。渲染独立运行，过期手部位置会清除；动画切回前台时不会追赶后台累积的时间。
+Hand inference runs in a classic Web Worker. At most 20 frames are sent per second, with only one frame in flight. Rendering runs independently, stale hand positions are cleared, and returning to the foreground does not replay accumulated simulation time.
 
 ```text
-src/main.ts                摄像头、交互、界面与生命周期
-src/physics.ts             弹性粒子团、接触力和镜像坐标
-src/renderer.ts            WebGL 连续表面
-public/tracking.worker.js  MediaPipe 后台识别
-scripts/setup-assets.mjs   下载并准备本地模型与 SDK
+src/main.ts                Camera, interaction, UI, and lifecycle
+src/physics.ts             Elastic particles, contact forces, and mirrored coordinates
+src/renderer.ts            Continuous WebGL surface
+public/tracking.worker.js  MediaPipe background inference
+scripts/setup-assets.mjs   Local SDK and model preparation
 ```
 
-## 常见问题
+## Sharing a demo
 
-- **相机无法打开：** 使用 localhost 或 HTTPS，在 Chrome 地址栏允许摄像头权限。普通局域网 HTTP 地址通常不能调用摄像头。
-- **相机被占用：** 关闭视频会议软件或其他使用摄像头的标签页。
-- **模型加载失败：** 执行 `npm run setup`，然后重新运行。不要直接双击 `index.html`。
-- **识别不稳定：** 保持光线充足，让手和背景有区别，手不要贴得过近，先用较慢的动作。
-- **能量看不见 / WebGL 不可用：** 检查 Chrome 的硬件加速设置；本原型需要 WebGL。
-- **推得太猛或太弱：** 调整「推动力度」。当前没有统一校准，不同镜头距离会影响手掌接触面积。
+A resume demo needs a public HTTPS address. This project can be hosted as a static website: install dependencies, ensure the hand model is present, run `npm run build`, and publish the complete `dist/` directory, including the tracking worker, SDK, WASM, and model assets. Visitors can try mouse mode immediately and opt into camera access.
 
-参考：[Google MediaPipe Hand Landmarker 官方指南](https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker/web_js)。依赖及模型保留其各自许可，本项目暂未授予额外的开源许可。
+GitHub Pages is one option. For a project URL under `/dark-energy/`, Vite needs that base path configured, and the home link must respect it. A GitHub Actions workflow can install dependencies and publish the build. No deployment has been configured yet. See the [Vite deployment guide](https://vite.dev/guide/static-deploy.html) and [GitHub Pages documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
+
+## Troubleshooting
+
+- **Camera unavailable:** Use localhost or HTTPS and allow camera access in Chrome. Plain HTTP on a local network usually cannot access the camera.
+- **Camera in use:** Close video-call apps or other tabs using your camera.
+- **Model loading failed:** Run `npm run setup` and restart. Do not open `index.html` directly from disk.
+- **Unstable tracking:** Use good lighting, keep your hand distinct from the background, avoid moving too close to the lens, and begin with slow gestures.
+- **Energy invisible / WebGL unavailable:** Check Chrome’s hardware acceleration setting. This prototype requires WebGL.
+- **Push too strong or weak:** Adjust **Push strength**. Interaction is not calibrated; distance from the camera affects the palm contact area.
+
+Reference: [Google MediaPipe Hand Landmarker guide](https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker/web_js). Dependencies and model assets retain their respective licenses. This project does not currently grant an additional open-source license.

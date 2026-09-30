@@ -1,32 +1,32 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#eeeae2" />
-    <meta name="description" content="Dark Energy — 用双手触碰漂浮的黑色物质。" />
-    <title>Dark Energy · 黑色能量</title>
+    <meta name="description" content="Dark Energy — Touch a floating mass of dark matter with your hands." />
+    <title>Dark Energy · Interactive Experiment</title>
   </head>
   <body>
     <div id="app">
-      <header class="masthead"><a class="wordmark" href="/">DE<span> / 001</span></a><span class="edition">交互实验 · 黑色能量</span><span class="version">V0.1</span></header>
+      <header class="masthead"><a class="wordmark" href="/">DE<span> / 001</span></a><span class="edition">INTERACTIVE EXPERIMENT</span><span class="version">V0.1</span></header>
       <main>
-        <div class="heading"><div><p class="eyebrow">A MATERIAL WITHOUT A WORLD</p><h1>Dark Energy<span>黑色能量</span></h1></div><p class="intro">让它漂浮。<br />伸出手，改变它的方向。</p></div>
-        <section class="experiment" aria-label="黑色能量交互区域">
-          <div class="stage" id="stage" tabindex="0" aria-label="移动鼠标或手指推动黑色能量">
+        <div class="heading"><div><p class="eyebrow">A MATERIAL WITHOUT A WORLD</p><h1>Dark Energy<span>LIVING MATTER</span></h1></div><p class="intro">Let it float.<br />Reach out. Change its course.</p></div>
+        <section class="experiment" aria-label="Dark Energy interaction area">
+          <div class="stage" id="stage" tabindex="0" aria-label="Move your mouse or finger to push the dark energy">
             <video id="camera" autoplay muted playsinline></video>
-            <canvas id="energy" aria-label="流动的黑色能量"></canvas>
+            <canvas id="energy" aria-label="Flowing dark energy"></canvas>
             <canvas id="overlay" aria-hidden="true"></canvas>
-            <div class="stage-top"><span class="live"><i id="indicator"></i><span id="mode">鼠标试玩</span></span><span id="hand-count">移动指针，推动能量</span></div>
+            <div class="stage-top"><span class="live"><i id="indicator"></i><span id="mode">Mouse mode</span></span><span id="hand-count">Move your pointer to push</span></div>
             <span class="coordinate">FIELD / 01</span>
-            <div class="stage-bottom"><span id="hint">不按鼠标也能推 · 触屏用手指滑动</span><button class="icon-button" id="fullscreen" aria-label="全屏" title="全屏"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></svg></button></div>
+            <div class="stage-bottom"><span id="hint">Move to push · Swipe on touchscreens</span><button class="icon-button" id="fullscreen" aria-label="Fullscreen" title="Fullscreen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></svg></button></div>
           </div>
-          <div class="controls"><button class="primary" id="start">开启摄像头 <span>↗</span></button><button id="pause" aria-pressed="false">暂停</button><button id="reset">重置能量</button><label class="skeleton"><input type="checkbox" id="skeleton" checked /> 显示手部轨迹</label></div>
-          <p class="status" id="status" role="status" aria-live="polite">先用鼠标试试，或开启摄像头，用手掌和指尖推动它。</p>
+          <div class="controls"><button class="primary" id="start">Enable camera <span>↗</span></button><button id="pause" aria-pressed="false">Pause</button><button id="reset">Reset energy</button><label class="skeleton"><input type="checkbox" id="skeleton" checked /> Show hand tracking</label></div>
+          <p class="status" id="status" role="status" aria-live="polite">Try your mouse, or enable the camera to push with your palms and fingertips.</p>
         </section>
-        <div class="lower"><div class="instructions"><p class="eyebrow">HOW TO TOUCH THE INTANGIBLE</p><p>慢慢靠近，让边缘凹陷。<br />快速挥手，把它推向远处。<br />停下来，等它重新聚拢。</p></div><div class="tuning"><label for="flow">流动程度 <output id="flow-value">1.0</output></label><input id="flow" type="range" min="0" max="2" value="1" step="0.1" /><label for="strength">推动力度 <output id="strength-value">1.0</output></label><input id="strength" type="range" min="0.3" max="2" value="1" step="0.1" /></div><div class="note"><p class="eyebrow">LOCAL / PRIVATE</p><p>画面只在你的浏览器中处理。<br />不上传、不录制、不使用麦克风。</p></div></div>
+        <div class="lower"><div class="instructions"><p class="eyebrow">HOW TO TOUCH THE INTANGIBLE</p><p>Approach slowly to deform the edge.<br />Swipe quickly to send it drifting.<br />Stop and watch it gather again.</p></div><div class="tuning"><label for="flow">Flow <output id="flow-value">1.0</output></label><input id="flow" type="range" min="0" max="2" value="1" step="0.1" /><label for="strength">Push strength <output id="strength-value">1.0</output></label><input id="strength" type="range" min="0.3" max="2" value="1" step="0.1" /></div><div class="note"><p class="eyebrow">LOCAL / PRIVATE</p><p>Video is processed in your browser.<br />No uploads, recording, or microphone.</p></div></div>
       </main>
-      <footer><span>YEZI / EXPERIMENTS</span><span>一种可以触碰的想象。</span></footer>
+      <footer><span>YEZI / EXPERIMENTS</span><span>AN IMAGINATION YOU CAN TOUCH.</span></footer>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
