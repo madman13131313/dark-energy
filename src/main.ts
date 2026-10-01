@@ -110,12 +110,13 @@ async function startCamera() {
     const currentWorker = new Worker(new URL(`${import.meta.env.BASE_URL}tracking.worker.js`, window.location.href));
     worker = currentWorker;
     await new Promise<void>((resolve, reject) => {
-      const timer = window.setTimeout(() => reject(new Error('Hand tracking took too long to load. Disable the camera and try again. If this persists, run npm run setup.')), 45000);
+      const timer = window.setTimeout(() => reject(new Error('Hand tracking took too long to load. Check your connection and try enabling the camera again. You can still play with your mouse or touchscreen.')), 45000);
       cancelLoading = () => { clearTimeout(timer); resolve(); };
-      currentWorker.onerror = () => {
+      currentWorker.onerror = (event) => {
         clearTimeout(timer);
         if (token !== session) return;
-        if (!ready) reject(new Error('Could not start hand tracking. Run npm run setup, then restart.'));
+        console.error('Hand tracking worker:', event.error ?? { message: event.message, filename: event.filename, lineno: event.lineno, colno: event.colno });
+        if (!ready) reject(new Error('Could not start hand tracking. Try the latest Chrome, then enable the camera again. You can still play with your mouse or touchscreen.'));
         else { stopCamera(false); message('The hand tracking worker stopped. Re-enable the camera or continue with your mouse.', true); }
       };
       currentWorker.onmessage = ({ data }) => {
@@ -124,9 +125,9 @@ async function startCamera() {
         else if (data.type === 'result') { busy = false; updateHands(data.landmarks, data.handedness, data.timestamp); }
         else if (data.type === 'error') {
           clearTimeout(timer);
-          if (!ready) reject(new Error('Could not load the hand tracking model. Run npm run setup, then restart.'));
+          if (!ready) reject(new Error('Could not load hand tracking. Check your connection, try the latest Chrome, and enable the camera again. You can still play with your mouse or touchscreen.'));
           else { stopCamera(false); message('Hand tracking stopped. Re-enable the camera or continue with your mouse.', true); }
-          console.error('Hand tracking:', data.message);
+          console.error('Hand tracking:', { name: data.name, message: data.message, stack: data.stack });
         }
       };
       currentWorker.postMessage({ type: 'init', base: new URL(import.meta.env.BASE_URL, window.location.href).href });

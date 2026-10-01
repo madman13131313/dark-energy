@@ -2,6 +2,14 @@
 
 Newest entries appear first.
 
+## 2026-10-01 · Explicit hand-tracking canvas and visitor recovery
+
+- Check worker OffscreenCanvas support before initialization and supply an explicit 1 × 1 OffscreenCanvas to MediaPipe; retain all existing tracking options.
+- Preserve the original worker error in console diagnostics and forward its name, message, and stack to the page. Include native worker error details in page diagnostics.
+- Replace developer-only setup instructions in loading failures with visitor guidance to retry, check connectivity, use the latest Chrome, or continue in mouse / touchscreen mode.
+- Validation: three physics tests, TypeScript checks, production build, and diff checks passed. Mocked-SDK worker checks covered canvas options, missing OffscreenCanvas, and preservation of the original error / stack.
+- Real browser model initialization and real-camera interaction were not verified for this change.
+
 ## 2026-09-30 · GitHub Pages path preparation
 
 - Set Vite's base path to `/dark-energy/` and made the wordmark home link follow the configured base.
